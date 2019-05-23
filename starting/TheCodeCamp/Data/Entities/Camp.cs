@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace TheCodeCamp.Data
 {
+	//in the Entities folder is the actual "shapes" of the data in the datastore, in this case MSSQL server built into VS2019
   public class Camp
   {
     public int CampId { get; set; }

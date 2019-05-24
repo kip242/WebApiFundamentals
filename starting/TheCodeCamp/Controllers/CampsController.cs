@@ -84,5 +84,17 @@ namespace TheCodeCamp.Controllers
 				return InternalServerError(ex);
 			}
 		}
+
+		public async Task<IHttpActionResult> Post()
+		{
+			try
+			{
+				return null;
+			}
+			catch(Exception ex)
+			{
+				return InternalServerError(ex);
+			}
+		}
     }
 }

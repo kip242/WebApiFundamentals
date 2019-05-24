@@ -19,7 +19,8 @@ namespace TheCodeCamp.Data
 				//we do this to TELL the map what to do because AutoMapper Conventionally does not know where to find the new "Venue" name we want to display because it doesn't exist
 				//in our entity
 				//for the indvidual member map    get camp.venue               from Location.VenueName
-				.ForMember(                       c => c.Venue,                 opt => opt.MapFrom( m => m.Location.VenueName));
+				.ForMember(                       c => c.Venue,                 opt => opt.MapFrom( m => m.Location.VenueName))
+				.ReverseMap();
 
 		}
     }

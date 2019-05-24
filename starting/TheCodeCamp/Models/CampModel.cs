@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,9 +11,15 @@ namespace TheCodeCamp.Models
 	//We can also change the name of the properties to something more user friendly if needed, if the property names of the Entities don't make much sense, but we didn't do that here
 	public class CampModel
 	{
+		//Adding the attribute required sets the rules for CampsController checking to see if ModelState.IsValid
+		[Required]
 		public string Name { get; set; }
+		[Required]
 		public string Moniker { get; set; }
+		[Required]
 		public DateTime EventDate { get; set; } = DateTime.MinValue;
+		[Required]
+		[Range(1,30)]
 		public int Length { get; set; } = 1;
 
 		//in Camp there is an ICollection<Talks> we want return TalkModels similarly to the way we are returning CampModels

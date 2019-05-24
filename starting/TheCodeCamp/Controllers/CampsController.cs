@@ -48,7 +48,7 @@ namespace TheCodeCamp.Controllers
 			}
 		}
 		//This action We are allowing the user to get only an individual camp, here we use moniker inside the URL to specify which camp they are looking for
-		[Route("{moniker}")]
+		[Route("{moniker}", Name ="GetCamp")]
 		public async Task<IHttpActionResult> Get(string moniker)
 		{
 			try
@@ -85,13 +85,84 @@ namespace TheCodeCamp.Controllers
 			}
 		}
 
-		public async Task<IHttpActionResult> Post()
+		[Route()]
+		public async Task<IHttpActionResult> Post(CampModel model)
 		{
 			try
 			{
-				return null;
+				if (await _repository.GetCampAsync(model.Moniker) != null)
+				{
+					ModelState.AddModelError("Moniker", "Moniker in use");
+				}
+
+				if (ModelState.IsValid)
+				{
+					var camp = _mapper.Map<Camp>(model);
+					_repository.AddCamp(camp);
+
+					if (await _repository.SaveChangesAsync())
+					{
+						var newModel = _mapper.Map<CampModel>(camp);
+						
+						return CreatedAtRoute("GetCamp", new { moniker = newModel.Moniker }, newModel);
+					}
+				}
 			}
 			catch(Exception ex)
+			{
+				return InternalServerError(ex);
+			}
+
+			return BadRequest(ModelState);
+		}
+
+		[Route("moniker")]
+		public async Task<IHttpActionResult> Put(string moniker, CampModel model)
+		{
+			try
+			{
+				var camp = await _repository.GetCampAsync(moniker);
+				if (camp == null) return NotFound();
+
+				//Map from model to camp.  first property is source second is the destination.  this is diff from previous implementations where we go from camp to model
+				_mapper.Map(model, camp);
+
+				if (await _repository.SaveChangesAsync())
+				{
+					return Ok(_mapper.Map<CampModel>(camp));
+				}
+				else
+				{
+					return InternalServerError();
+				}
+
+			}
+			catch (Exception ex)
+			{
+				return InternalServerError(ex);
+			}
+		}
+
+		[Route("moniker")]					//if a route is included you need to include it in the action declaration
+		public async Task<IHttpActionResult> Delete(string moniker)
+		{
+			try
+			{
+				var camp = await _repository.GetCampAsync(moniker);
+				if (camp == null) return NotFound();
+
+				_repository.DeleteCamp(camp);
+
+				if (await _repository.SaveChangesAsync())
+				{
+					return Ok();
+				}
+				else
+				{
+					return InternalServerError();
+				}
+			}
+			catch (Exception ex)
 			{
 				return InternalServerError(ex);
 			}
